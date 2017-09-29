@@ -34,13 +34,13 @@ class EmpresaController extends Controller
                 return $page;
             });
 
-            $empresas = Vaga::paginate($qtd);
+            $empresas = Empresa::paginate($qtd);
             
             $empresas = $empresas->appends(Request::capture()->except('page')); 
 
             return response()->json(['empresas'=>$empresas], 200);
         } catch (\Exception $e){
-            return response()->json('Ocorreu um erro no servidor', 500);
+            return response()->json(['message'=>'Ocorreu um erro no servidor'], 500);
         }
     }
 
@@ -71,7 +71,7 @@ class EmpresaController extends Controller
                 return response()->json(['message'=>'Dados inválidos'], 400);
             }     
             }catch (\Exception $e){
-                return response()->json('Ocorreu um erro no servidor', 500);
+                return response()->json(['message'=>'Ocorreu um erro no servidor'], 500);
             } 
     }
 
@@ -94,8 +94,8 @@ class EmpresaController extends Controller
                 return response()->json(['message'=>'A empresa com id '.$id.' não existe'], 404);
             }
         }catch (\Exception $e){
-                return response()->json('Ocorreu um erro no servidor', 500);
-            }
+            return response()->json(['message'=>'Ocorreu um erro no servidor'], 500);
+        }
     }
 
     /**
@@ -127,8 +127,8 @@ class EmpresaController extends Controller
                 return response()->json(['message'=>'Dados inválidos'], 400);
             }
         }catch (\Exception $e){
-                return response()->json('Ocorreu um erro no servidor', 500);
-            }
+            return response()->json(['message'=>'Ocorreu um erro no servidor'], 500);
+        }
     }
 
     /**
@@ -139,20 +139,50 @@ class EmpresaController extends Controller
      */
     public function destroy($id)
     {
+        $cont = 0;
         try{
             if($id < 0){
                 return response()->json(['message'=>'ID menor que zero, por favor, informe um ID válido'], 400);
             }
+            if(Vaga::where('empresa_id', '=', $id)->count()){                
+                $vagas = Vaga::where('empresa_id', '=', $id)->get();
+                foreach($vagas as $vaga){
+                    if($vaga->status == 1){
+                        $cont = 1;
+                    }                    
+                }
+                if($cont != 0){
+                    return response()->json(['message'=>'Não é possível remover a empresa. Há vagas relacionadas'], 202);
+                }                
+            }   
             $empresa = Empresa::find($id);
             if($empresa){
                 $empresa->delete();
                 return response()->json([], 204);
             }else{
                 return response()->json(['message'=>'A empresa com id '.$id.' não existe'], 404);
+            }         
+        }catch (\Exception $e){
+            return response()->json(['message'=>'Ocorreu um erro no servidor'], 500);
+        }
+    }
+
+    public function vagas($id)
+    {
+        try{
+            if($id < 0){
+                return response()->json(['message'=>'ID menor que zero, por favor, informe um ID válido'], 400);
+            }
+            $empresa = Empresa::find($id);
+            if($empresa){
+                return response()->json(['vagas'=>$empresa->vagas], 200);
+            }else{
+                return response()->json(['message'=>'A empresa com id '.$id.' não existe'], 404);
             }
         }catch (\Exception $e){
-                return response()->json('Ocorreu um erro no servidor', 500);
+            return response()->json(['message'=>'Ocorreu um erro no servidor'], 500);
         }
+        
     }
     
 }

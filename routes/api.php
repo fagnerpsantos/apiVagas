@@ -13,7 +13,9 @@ use Illuminate\Http\Request;
 |
 */
 
-
+Route::get('/vagas/empresa/{id}', 'VagaController@empresa')->name('vagas.empresa');
 Route::resource('vagas', 'VagaController');
+
+Route::get('/empresas/vagas/{id}', 'EmpresaController@vagas')->name('empresas.vagas');
 Route::resource('empresas', 'EmpresaController');
 

@@ -20,8 +20,9 @@ class CreateVagasTable extends Migration
             $table->float('salario');
             $table->integer('qtdHoras');
             $table->integer('qtdVagas');
+            $table->boolean('status');
             $table->integer('empresa_id')->unsigned();
-            $table->foreign('empresa_id')->references('id')->on('empresas');
+            $table->foreign('empresa_id')->references('id')->on('empresas')->onDelete('cascade');
             $table->timestamps();
         });
     }

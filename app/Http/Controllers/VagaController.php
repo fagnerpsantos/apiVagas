@@ -17,6 +17,7 @@ class VagaController extends Controller
             "salario" => 'required|numeric|min:0',
             "qtdHoras" => 'required|numeric|min:0',
             "qtdVagas" => 'required|numeric|min:1',
+            "status" => 'required|boolean',
             "empresa_id" => 'required'
             ]);
         return $validator;
@@ -62,7 +63,7 @@ class VagaController extends Controller
                     'errors' => $validator->errors()], 
                     400);
             }
-            $data = $request->only(['titulo', 'descricao', 'salario', 'qtdHoras', 'qtdVagas', 'empresa_id']);
+            $data = $request->only(['titulo', 'descricao', 'salario', 'qtdHoras', 'qtdVagas', 'status', 'empresa_id']);
             if($data){
                 $vaga = Vaga::create($data);
                 if($vaga){
@@ -117,7 +118,7 @@ class VagaController extends Controller
                     'errors' => $validator->errors()], 
                     400);
             }
-            $data = $request->only(['titulo', 'descricao', 'salario', 'qtdHoras', 'qtdVagas', 'empresa_id']);
+            $data = $request->only(['titulo', 'descricao', 'salario', 'qtdHoras', 'qtdVagas', 'status', 'empresa_id']);
             if($data){
                 $vaga = Vaga::find($id);
                 if($vaga){
@@ -156,6 +157,24 @@ class VagaController extends Controller
         }catch (\Exception $e){
                 return response()->json('Ocorreu um erro no servidor', 500);
         }
+    }
+
+    public function empresa($id)
+    {
+        try{
+            if($id < 0){
+                return response()->json(['message'=>'ID menor que zero, por favor, informe um ID válido'], 400);
+            }
+            $vaga = Vaga::find($id);
+            if($vaga){
+                return response()->json([$vaga->empresa], 200); 
+            }else{
+                return response()->json(['message'=>'A vaga com id '.$id.' não existe'], 404);
+            }
+        }catch (\Exception $e){
+            return response()->json('Ocorreu um erro no servidor', 500);
+        }       
+
     }
     
 }
