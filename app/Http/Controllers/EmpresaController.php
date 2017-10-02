@@ -139,7 +139,6 @@ class EmpresaController extends Controller
      */
     public function destroy($id)
     {
-        $cont = 0;
         try{
             if(Vaga::where('empresa_id', '=', $id)->count()){                
                 $vagas = Vaga::where('empresa_id', '=', $id)->get();

@@ -157,24 +157,5 @@ class VagaController extends Controller
         }catch (\Exception $e){
                 return response()->json('Ocorreu um erro no servidor', 500);
         }
-    }
-
-    public function empresa($id)
-    {
-        try{
-            if($id < 0){
-                return response()->json(['message'=>'ID menor que zero, por favor, informe um ID válido'], 400);
-            }
-            $vaga = Vaga::find($id);
-            if($vaga){
-                return response()->json([$vaga->empresa], 200); 
-            }else{
-                return response()->json(['message'=>'A vaga com id '.$id.' não existe'], 404);
-            }
-        }catch (\Exception $e){
-            return response()->json('Ocorreu um erro no servidor', 500);
-        }       
-
-    }
-    
+    }    
 }
